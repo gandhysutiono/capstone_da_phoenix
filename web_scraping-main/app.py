@@ -50,19 +50,40 @@ for i in range(0, row_length):
 temp = temp[::-1]
 
 #change into dataframe
-data = pd.DataFrame(temp,columns = ('period','MarketCap','Volume','Open','Close'))
+ethereumdata = pd.DataFrame(temp,columns = ('period','MarketCap','Volume','Open','Close'))
 
 #insert data wrangling here
+ethereumdata['period'] = ethereumdata['period'].astype('datetime64')
 
+ethereumdata['MarketCap'] = ethereumdata['MarketCap'].str.replace("$","")
+ethereumdata['MarketCap'] = ethereumdata['MarketCap'].str.replace(",","")
+ethereumdata['MarketCap'] = ethereumdata['MarketCap'].astype('float64')
+
+
+ethereumdata['Volume'] = ethereumdata['Volume'].str.replace("$","")
+ethereumdata['Volume'] = ethereumdata['Volume'].str.replace(",","")
+ethereumdata['Volume'] = ethereumdata['Volume'].astype('float64')
+
+
+ethereumdata['Open'] = ethereumdata['Open'].str.replace("$","")
+ethereumdata['Open'] = ethereumdata['Open'].str.replace(",","")
+ethereumdata['Open'] = ethereumdata['Open'].astype('float64')
+
+ethereumdata['Close'] = ethereumdata['Close'].str.replace("$","")
+ethereumdata['Close'] = ethereumdata['Close'].str.replace(",","")
+ethereumdata['Close'] = ethereumdata['Close'].str.replace("N/A","2169.40")
+ethereumdata['Close'] = ethereumdata['Close'].astype('float64')
+
+ethereumdata = ethereumdata.set_index('period')
 #end of data wranggling 
 
 @app.route("/")
 def index(): 
 	
-	card_data = f'{data["Volume"].mean().round(2)}' #be careful with the " and ' 
+	card_data = f'{ethereumdata["Volume"].mean().round(2)}' #be careful with the " and ' 
 
 	# generate plot
-	ax = data.plot(figsize = (20,9)) 
+	ax = ethereumdata.plot(figsize = (20,9)) 
 	
 	# Rendering plot
 	# Do not change this
